@@ -1,5 +1,6 @@
 #include <camera.h>
 
+#include <Eigen/Dense>
 #include <iostream>
 #include <opencv2/core/core.hpp>
 #include <opencv2/features2d.hpp>
@@ -29,9 +30,13 @@ class Visual_Odometery {
   std::vector<cv::DMatch> matches;
   cv::Ptr<cv::DescriptorMatcher> matcher;
   cv::Mat essentialMat, mask;
+  //  Eigen::Matrix R_O;
+  //  Eigen::vec T_O;
+
   cv::Mat T;
   cv::Mat T_o;
   cv::Mat temp_T;
+  cv::Mat temp_R;
   cv::Mat R;
   cv::Mat R_o;
   cv::Mat delt;

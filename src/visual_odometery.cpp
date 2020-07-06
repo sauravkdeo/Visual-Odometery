@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <opencv2/calib3d.hpp>
+#include <opencv2/core/eigen.hpp>
 #include <opencv2/core/types.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/plot.hpp>
@@ -60,29 +61,25 @@ void Visual_Odometery::estimateAndPlotPose() {
   essentialMat = cv::findEssentialMat(selected_points1, selected_points2);
   cv::recoverPose(essentialMat, selected_points1, selected_points2, R, T);
   if (first) {
+    std::cout << "chech";
     first = false;
-    R_o = R;
     T_o = T;
+    R_o = R;
   } else {
-    if (T.at<double>(0, 0) < 0) {
-      R = -1 * R;
-      T = -T;
-    }
-    R_o = R_o * R;
+    //    if (T.at<double>(0, 0) < 0) {
+    //      T = -T;
+    //    }
+    //    if (R_o.at<double>(0, 0) < 0) {
+    //      R_o = -R_o;
+    //    }
+    //    std::cout << "Old Val " << temp_T << T_o << std::endl;
+    temp_R = R_o * R;
+    R_o = temp_R;
     delt = R_o * T;
-    double x = T_o.at<double>(0, 0);
-    double y = T_o.at<double>(0, 1);
-    double z = T_o.at<double>(0, 2);
-
-    double dx = delt.at<double>(0, 0);
-    double dy = delt.at<double>(0, 1);
-    double dz = delt.at<double>(0, 2);
-
-    T_o.at<double>(0, 0) = x + dx;
-    T_o.at<double>(0, 1) = y + dy;
-    T_o.at<double>(0, 2) = z + dz;
+    temp_T = T_o + delt;
+    T_o = temp_T;
   }
-  std::cout << delt << " " << T_o << std::endl << std::endl;
+  //  std::cout << delt << " " << T_o << std::endl << std::endl;
   xData.push_back(T_o.at<double>(0, 0));
   yData.push_back(T_o.at<double>(0, 1));
   plot_graph();
